@@ -1,0 +1,48 @@
+#!/bin/sh
+# Usage: ls_sub qname nodes ppn [CUSTOM_SCRIPT]
+
+# 读取参数
+if [ $# -ne 3 -a  $# -ne 4 ];then
+	echo "USAGE: ls_sub qname nodes ppn [CUSTOM_SCRIPT]"
+	exit 0;
+fi
+qname=$1
+nodes=$2
+ppn=$3
+
+
+
+
+corenum=$(($nodes*$ppn))
+
+
+command_exist() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+command_not_found() {
+    echo "No pbs system found."
+    echo "You need LSF or Torque to use labkit."
+    exit 1
+}
+
+
+if [ $# -eq 4 ];then
+    script=$4
+
+    if command_exist "bsub"; then
+        bsub -q $qname -n $corenum -o %J.log -e %J.err $script `pwd`
+    elif command_exist "qsub"; then
+        qsub -q $qname -l nodes=$nodes:ppn=$ppn  $script `pwd`
+    else
+        command_not_found
+    fi
+elif  [ $# -eq 3 ]; then
+    if command_exist "bsub"; then
+        bsub -q $qname -n $corenum -o %J.log -e %J.err ls_bpbs `pwd`
+    elif command_exist "qsub"; then
+        qsub -q $qname -l nodes=$nodes:ppn=$ppn  ls_qpbs `pwd`
+    else
+        command_not_found
+    fi
+fi

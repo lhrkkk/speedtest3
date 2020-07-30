@@ -1,0 +1,10 @@
+[book]
+authors = ["lhr"]
+language = "zh"
+multilingual = false
+src = "doc"
+title = "Labkit docs"
+description = "The Labkit Documents."
+
+[build]
+build-dir = "build/labkit"

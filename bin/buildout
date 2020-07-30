@@ -1,0 +1,12 @@
+#!/Users/lhr/.pyenv/versions/3.7.4/bin/python
+
+import sys
+sys.path[0:0] = [
+  '/Users/lhr/@/@prod/lab/outer/labkit/eggs/zc.buildout-2.13.3-py3.7.egg',
+  '/Users/lhr/@/@prod/lab/outer/labkit/eggs/setuptools-33.1.1-py3.7.egg',
+  ]
+
+import zc.buildout.buildout
+
+if __name__ == '__main__':
+    sys.exit(zc.buildout.buildout.main())

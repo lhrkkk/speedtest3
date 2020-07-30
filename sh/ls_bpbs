@@ -1,0 +1,36 @@
+#!/bin/sh
+
+#lk_pbs 启动 -> labkit push push_yaml-> qyaml 结束
+#            -> lk_worker manage_worker多线程>compute_worker计算监控qcompute结束标志。
+#            -> lk_interp yaml_worker 生成绝对路径file,bq push_compute 监控qyaml 队列标志结束。
+#
+
+
+
+HOSTFILE=$HOME/.lsbatch/host$$.`hostname`
+echo $LSB_MCPU_HOSTS |sed 's/ / slots=/g' | sed 's/slots=node/\nnode/g' >$HOSTFILE
+
+#echo $HOSTFILE
+#cat $HOSTFILE
+
+
+CURRENT_DIR=$1
+echo $HOSTFILE >$1/HOSTFILE
+# 首先启动labkit队列服务
+ls_run $HOSTFILE $CURRENT_DIR
+
+# Help：
+# l_insert 和 ls_insert 的用法：
+# l_insert  single_cmd folder $HOSTNAME   提交一个目录进行单步计算
+# ls_insert folder $HOSTNAME              提交一个目录根据目录内的 recipe.yml 进行整体计算
+
+#########################################
+# 运行自有命令
+
+# 默认是直接提交当前目录根据 recipe.yml 整体计算
+ls_insert  $CURRENT_DIR $HOSTNAME
+
+#########################################
+
+# 最后推送结束标志
+ls_end $HOSTNAME

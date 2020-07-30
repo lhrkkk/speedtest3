@@ -1,0 +1,22 @@
+- defun path_matrix:
+    - [X]
+    # 1.1 生成原始结构
+    - sh template_generate : [X]
+    - sh input_file_creat : [X]
+
+    # 1.2 生成dftb 初始文件
+    - sh_map single_file.sh : [txt]       #计算高斯单点能
+    - sh out-dftb: []
+
+    # 2.1 dftb优化
+    - sh_map single_dftb_opt.sh: [txt]
+
+    # 2.2 处理
+    - sh ls *.out > list.txt; findhf: []
+    - sh out-orca_ddn : []
+
+    #  3. orca 优化
+    - sh_map  single_orca.sh : [txt]
+    - sh rm *err*; cp *.out ../: []
+
+- path_matrix: [g]

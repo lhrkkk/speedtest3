@@ -1,0 +1,12 @@
+#!/bin/sh
+
+
+#lk_pbs 启动 -> labkit push push_yaml-> qyaml 结束
+#            -> lk_worker manage_worker多线程>compute_worker计算监控qcompute结束标志。
+#            -> lk_interp yaml_worker 生成绝对路径file,bq push_compute 监控qyaml 队列标志结束。
+#
+
+
+HOSTFILE=$labkit_dir/bin/LOCALHOST
+ls_run $HOSTFILE `pwd`
+

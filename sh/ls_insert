@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# 确定 ip 和端口, 启动 beanstalkd, 运行front 推送任务, 连接node启动 worker.
+# sub corenum qname
+# # # TODO: 读取参数的检查
+
+#lk_sub qname nodes ppn
+# 读取参数
+if [ $# -ne 2 ];then
+	echo "Usage: ls_insert  folder host"
+	exit 0;
+fi
+if [ $# -eq 2 ];then
+    folder=$1
+    host=$2
+fi
+
+
+# push
+#ssh $HOSTNAME "bash -c 'source ~/.bashrc;cd $folder && workon labkit&&which python&&ls_front recipe.yml $host'"&
+source ~/.bashrc;cd "$folder" && workon labkit&&which python&&ls_front recipe.yml "$host"

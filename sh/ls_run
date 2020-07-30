@@ -1,0 +1,46 @@
+#!/bin/sh
+
+
+#lk_pbs 启动 -> labkit push push_yaml-> qyaml 结束
+#            -> lk_worker manage_worker多线程>compute_worker计算监控qcompute结束标志。
+#            -> lk_interp yaml_worker 生成绝对路径file,bq push_compute 监控qyaml 队列标志结束。
+#
+
+
+# start beanstalkd, must have single case on a node.
+source ~/.bashrc
+
+beanstalk_server=$HOSTNAME
+killall beanstalkd
+beanstalkd&
+
+HOSTFILE=$1
+host_list=($(cat $HOSTFILE|cut -d' ' -f1))
+corenum_list=($(cat $HOSTFILE|cut -d'=' -f2))
+
+set -e
+
+CURRENT_DIR=$2
+
+# push
+#ssh $HOSTNAME "bash -c 'source ~/.bashrc;cd $CURRENT_DIR && workon labkit&&which python&&ls_front recipe.yml $beanstalk_server'"&
+
+# start interpreter-cell and compute-cell
+for (( i = 0; i < ${#host_list[@]}  ; i ++ ));do
+    echo host is ${host_list[i]}
+    echo ${#host_list[@]}
+    echo $i
+    host=${host_list[i]}
+#    echo $host
+#    corenum=${corenum_list[i]}
+
+#    ssh $host "bash -c 'cd $CURRENT_DIR && workon labkit&&which python&&labkit_manage interpreter-cell --beanstalk-server $beanstalk_server'" &
+    ssh $host "bash -c 'source ~/.bashrc;cd $CURRENT_DIR && workon labkit&&which python&&ls_worker $beanstalk_server'" &
+
+
+#    ssh $host "workon labkit&&which python&&labkit_manage interpreter-cell --beanstalk_server $beanstalk_server" &
+#    ssh $host "workon labkit&&which python&&l.worker $beanstalk_server" &
+
+
+done
+
